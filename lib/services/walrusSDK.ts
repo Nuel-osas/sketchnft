@@ -69,12 +69,14 @@ export function getServerWalletAddress(): string {
 
 /**
  * Upload blob using server's private key (server pays WAL tokens)
+ * Includes retry logic for transient failures
  */
 export async function uploadBlobWithServerKey(
   data: Uint8Array,
   options?: {
     epochs?: number;
     deletable?: boolean;
+    maxRetries?: number;
   }
 ): Promise<{
   blobId: string;
@@ -85,6 +87,7 @@ export async function uploadBlobWithServerKey(
   const signer = getSigner();
   const epochs = options?.epochs || DEFAULT_EPOCHS;
   const deletable = options?.deletable ?? false;
+  const maxRetries = options?.maxRetries ?? 3;
 
   console.log(`[WalrusSDK] Uploading blob (${data.length} bytes) with server wallet...`);
   console.log(`[WalrusSDK] Server wallet: ${signer.toSuiAddress()}`);
@@ -97,32 +100,51 @@ export async function uploadBlobWithServerKey(
   const costWal = (Number(cost.totalCost) / 1_000_000_000).toFixed(6);
   console.log(`[WalrusSDK] Cost: ${costWal} WAL`);
 
-  try {
-    const result = await client.writeBlob({
-      blob: data,
-      deletable,
-      epochs,
-      signer,
-    });
+  let lastError: Error | null = null;
 
-    const aggregatorUrl = AGGREGATOR_URLS[network];
-    const url = `${aggregatorUrl}/v1/blobs/${result.blobId}`;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      if (attempt > 1) {
+        console.log(`[WalrusSDK] Retry attempt ${attempt}/${maxRetries}...`);
+        // Wait before retry (exponential backoff)
+        await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
+      }
 
-    console.log(`[WalrusSDK] ✓ Blob uploaded: ${result.blobId}`);
-    console.log(`[WalrusSDK] ✓ URL: ${url}`);
+      const result = await client.writeBlob({
+        blob: data,
+        deletable,
+        epochs,
+        signer,
+      });
 
-    return {
-      blobId: result.blobId,
-      blobObjectId: result.blobObject?.id?.id,
-      url,
-      size: data.length,
-    };
-  } catch (error) {
-    console.error('[WalrusSDK] Upload failed:', error);
-    throw new Error(
-      `Walrus upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-    );
+      const aggregatorUrl = AGGREGATOR_URLS[network];
+      const url = `${aggregatorUrl}/v1/blobs/${result.blobId}`;
+
+      console.log(`[WalrusSDK] ✓ Blob uploaded: ${result.blobId}`);
+      console.log(`[WalrusSDK] ✓ URL: ${url}`);
+
+      return {
+        blobId: result.blobId,
+        blobObjectId: result.blobObject?.id?.id,
+        url,
+        size: data.length,
+      };
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      console.error(`[WalrusSDK] Upload attempt ${attempt} failed:`, lastError.message);
+
+      // Don't retry on certain errors
+      if (lastError.message.includes('Insufficient') ||
+          lastError.message.includes('No wallet configured')) {
+        break;
+      }
+    }
   }
+
+  console.error('[WalrusSDK] All upload attempts failed');
+  throw new Error(
+    `Walrus upload failed after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`
+  );
 }
 
 /**

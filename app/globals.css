@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+/* Modern Warm Theme */
+
+/* Wallet UI Styles - Custom styling for @mysten/dapp-kit */
+[data-dapp-kit] {
+  font-family: inherit;
+}
+
+[data-dapp-kit] button {
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  border-radius: 0 !important;
+  padding: 0.625rem 1.25rem !important;
+  transition: all 0.2s !important;
+  background: #f3f4f6 !important;
+  color: #1f2937 !important;
+  border: none !important;
+  cursor: pointer !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-size: 0.75rem !important;
+}
+
+[data-dapp-kit] button:hover {
+  background: #e5e7eb !important;
+  transform: scale(1.02) !important;
+}
+
+/* Additional specific targeting for connect button */
+button[data-dapp-kit-button],
+[data-dapp-kit] > button,
+.dapp-kit-button {
+  background: #f3f4f6 !important;
+  color: #1f2937 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  font-size: 0.75rem !important;
+}
+
+button[data-dapp-kit-button]:hover,
+[data-dapp-kit] > button:hover {
+  background: #e5e7eb !important;
+}
+
+[data-dapp-kit] [role="dialog"] {
+  background: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+[data-dapp-kit] [role="dialog"] h2 {
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+[data-dapp-kit] [role="dialog"] button {
+  width: 100%;
+  margin-top: 0.5rem;
+  background: linear-gradient(135deg, #d4a18a 0%, #9e6f5c 100%);
+  border: none;
+  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+[data-dapp-kit] [role="dialog"] button:hover {
+  opacity: 0.9;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection colors */
+::selection {
+  background-color: rgba(212, 161, 138, 0.3);
+  color: #1f2937;
+}
+
+/* Minimal box utility */
+.minimal-box {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0;
+}
+
+.minimal-box-invert {
+  background: rgba(31, 41, 55, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+body {
+  background-color: #ffffff;
+  color: #1f2937;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* Custom Range Slider Styling */
+input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a18a 0%, #9e6f5c 100%);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a18a 0%, #9e6f5c 100%);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type='range']::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
